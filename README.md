@@ -5,21 +5,23 @@
 - This module checks whether two measurements given in feet are equal.
 - It focuses on correct `object equality`, `safe floating-point comparison`, and clean OOP design.
 
-### ⚙️ Use Case: UC1 – Feet Measurement Equality
+---
+
+## ⚙️ Use Case: UC1 – Feet Measurement Equality
 
 - Accepts two numerical values in feet
 - Compares them for equality
 - Returns `true` if equal, otherwise false
 
-### ⚙️ Key Implementation Points
+---
+
+## ⚙️ Key Implementation Points
 
 - Uses a separate Feet class to represent a measurement
 - Measurement value is `private` and `final` (immutable)
 - `equals()` is overridden correctly
 - `Double.compare()` is used instead of `==`
-- Handles `null`, type mismatch, and same reference cases safely
-
----
+- Handles `null`, type mismatch, and same reference cases safely\#QunatityMeasurement
 
 # Quantity Measurement App – UC2 (Inches Equality)
 
@@ -112,7 +114,6 @@
 # Quantity Measurement App – UC5 (Unit-to-Unit Conversion)
 
 ### 📌 Overview
-
 - This module extends UC4 by adding `explicit unit-to-unit conversion support` to the Quantity Measurement App.
 - Instead of only `checking equality`, the `Length API` now allows `converting a measurement` from one unit to another using centralised conversion factors.
 - Supports conversion across `feet ↔ inches ↔ yards ↔ centimeters`.
@@ -139,27 +140,27 @@
 - Conversion preserves mathematical accuracy within `floating-point` tolerance
 - No mutation of existing objects; conversions return new values or instances
 
----
+ ---
 
-# Quantity Measurement App – UC6 (Addition of Two Length Units)
+  # Quantity Measurement App – UC6 (Addition of Two Length Units)
 
 ### 📌 Overview
 
 - This module enables addition operations between two length measurements.
 - It supports adding lengths in the same or different units (within the length category) and returns the result in the unit of the first operand.
-- For example, adding `1 foot` and `12 inches` yields `2 feet`.
+- For example, adding 1 foot and 12 inches yields 2 feet.
 
 ### ⚙️ Use Case: UC6 – Addition of Two Length Units (potentially different units)
 
 - Accepts two numerical values with their respective units.
-- Adds them and returns the sum in the unit of the `first operand`.
+- Adds them and returns the sum in the unit of the first operand.
 
 ### ⚙️ Key Concepts Learned
 
 - Addition of value objects with unit conversion.
-- `Immutability` and safe handling of operands.
+- Immutability and safe handling of operands.
 - Normalisation to a base unit for accurate arithmetic.
-- `Floating-point precision` management.
+- Floating-point precision management.
 - Commutativity and identity element behaviour.
 - Robust validation for null or invalid inputs.
 
@@ -169,22 +170,22 @@
 
 ### 📌 Overview
 
-- This module extends UC6 by allowing the caller to explicitly specify a `target unit` for addition results.
+- This module extends UC6 by allowing the caller to explicitly specify a target unit for addition results.
 - Instead of defaulting to the first operand’s unit, the result can be returned in any supported unit.
-- Example: `1 foot` + `12 inches` with target unit `YARDS ≈ 0.667 yards`.
+-  Example: 1 foot + 12 inches with target unit YARDS ≈ 0.667 yards.
 
 ### ⚙️ Use Case: UC7 – Addition with Target Unit Specification
 
 - Accepts two numerical values with their respective units and a target unit.
-- Adds them and returns the sum in the `explicitly specified target unit`.
+- Adds them and returns the sum in the explicitly specified target unit.
 
 ### ⚙️ Key Implementation Points (UC7 – Explicit Target Unit Addition)
 
-- Uses the same `immutable Length class` and LengthUnit enum.
-- Overloaded `add()` method:
-   - UC6: `add(A, B)` → result in the first operand’s unit.
-   - UC7: `add(A, B, targetUnit)` → result in explicitly specified unit.
-- Private utility method handles `conversion → addition → target` unit conversion.
+- Uses the same immutable Length class and LengthUnit enum.
+- Overloaded add() method:
+   - UC6: add(A, B) → result in the first operand’s unit.
+   - UC7: add(A, B, targetUnit) → result in explicitly specified unit.
+- Private utility method handles conversion → addition → target unit conversion.
 - Validation added: target unit must be non-null and valid.
 - Preserves immutability, precision, and commutativity.
 - Maintains backward compatibility with the UC6 addition.
@@ -214,39 +215,33 @@
    - `convertFromBaseUnit`(double baseValue)
 - Preserves immutability, precision, and commutativity.
 - `Public API` unchanged → `backward compatibility`.
-- Establishes a scalable design pattern for other measurement categories.
+- Establishes scalable design pattern for other measurement categories.
 
 ---
 
-# Quantity Measurement App – UC9 (Weight Equality, Conversion, and Addition)
+# Quantity Measurement App - UC9 (Weight Measurement)
 
-### 📌 Overview
+- Description: UC9 extends the Quantity Measurement App to support weight measurements (kilogram, gram, pound) alongside length. Weight operations mirror length operations: equality, conversion, and addition. Weight and length are separate, type-safe categories.
 
-- This module extends the Quantity Measurement App to support `weight measurements` (kilogram, gram, pound).
-- It focuses on correct object equality, unit conversion, addition operations, and safe floating-point comparisons while maintaining immutability and type safety.
+- Units & Conversion:
+  - KILOGRAM (kg) – base unit
+  - GRAM (g) – 1 kg = 1000 g
+  - POUND (lb) – 1 lb ≈ 0.453592 kg
 
-### ⚙️ Use Case: UC9 – Weight Measurement Equality, Conversion, and Addition
+- Implementation:
+  - WeightUnit enum handles all conversion logic.
+  - QuantityWeight class handles equality and arithmetic, delegating conversions to WeightUnit.
+  - Supports cross-unit equality and addition, explicit target unit, and immutable objects.
+  - Round-trip conversions maintain precision using epsilon.
+  - Weight vs. length comparisons are not allowed.
 
-- Accepts two or more numerical values with `weight units` (kg, g, lb)
-- Compares weights for equality
-- Converts weights between units
-- Adds two weight measurements and returns a new object
+- Example:
+  - Quantity(1.0, KILOGRAM).equals(Quantity(1000.0, GRAM)) → true
+  - Quantity(2.20462, POUND).convertTo(KILOGRAM) → Quantity(~1.0, KILOGRAM)
+  - Quantity(1.0, KILOGRAM).add(Quantity(1000.0, GRAM), GRAM) → Quantity(2000.0, GRAM)
 
-### ⚙️ Key Implementation Points
-
-- Uses a **WeightUnit enum** for conversion responsibility (base unit: kilogram)
-- Uses a **QuantityWeight class** to represent weight measurements
-- Measurement value and unit are **private and final** (immutable)
-- `equals()` is overridden to handle cross-unit comparisons
-- `convertTo()` method normalises via the base unit
-- `add()` methods support implicit (default) and explicit target unit addition
-- **Double.compare()** ensures safe floating-point comparison
-- Handles null, type mismatch, same reference, and category incompatibility safely
-- Weight and length measurements are **distinct categories** and cannot be compared
-
----
-
-# Quantity Measurement App – UC10 (Generic Quantity Class with Unit Interface)
+ ---
+ # Quantity Measurement App – UC10 (Generic Quantity Class with Unit Interface)
 
 ### 📌 Overview
 
@@ -275,14 +270,7 @@
 
 ---
 
-# Quantity Measurement App – UC11 (Volume Equality, Conversion, and Addition)
-
-### 📌 Overview
-
-- This module extends the Quantity Measurement Application to support **volume measurements** (litres, millilitres, gallons).
-- It demonstrates equality comparison, unit conversion, and addition operations for volume, leveraging the generic `Quantity<U>` class and `IMeasurable` interface. - Volume is treated as a separate category from length and weight, validating the scalability of the generic architecture.
-
-### ⚙️ Use Case:  UC11 – Volume Measurement Equality, Conversion, and Addition
+## ⚙️ Use Case:  UC11 – Volume Measurement Equality, Conversion, and Addition
 
 - Accepts numerical values with their respective volume units (LITRE, MILLILITRE, GALLON)
 - Compares volumes for equality
@@ -300,14 +288,7 @@
 
 ---
 
-# Quantity Measurement App - UC12 (Subtraction and Division Operations on Quantity Measurements)
-
-### 📌 Overview
-
-- UC12 extends the Quantity Measurement Application by `adding subtraction` and `division operations` to the `generic Quantity<U> model`.
-- It builds on `UC1–UC11` and enables full arithmetic manipulation while preserving immutability, type safety, and cross-unit support.
-
-### ⚙️ Use Case: UC12 – Quantity Subtraction & Division
+## ⚙️ Use Case: UC12 – Quantity Subtraction & Division
 
 - Subtract two quantities of the same measurement category
 - Divide two quantities to obtain a dimensionless ratio
@@ -327,32 +308,23 @@
 - Results rounded to two decimal places (subtraction only)
 
 ---
+  ## UC13: Centralized Arithmetic Operations Using Enum Strategy
 
-# Quantity Measurement App - UC13 (Centralised Arithmetic Logic to Enforce DRY in Quantity Operations)
+- Description: UC14 refactors the Quantity Measurement App by introducing an ArithmeticOperation enum (ADD, SUBTRACT, DIVIDE) to centralize arithmetic behavior. All operations now delegate to a single private helper method, eliminating duplicate validation and conversion logic while preserving existing functionality.
 
-### 📌 Overview
+- Implementation:
+  - ArithmeticOperation enum handles operation-specific computation.
+  - Private helper method performs validation, base unit conversion, enum dispatch, and result conversion.
+  - Add and subtract results are rounded to two decimals.
+  - Divide returns a dimensionless raw double value.
+  - No changes required to existing unit enums (LengthUnit, WeightUnit, VolumeUnit).
+  - Full backward compatibility with UC12 maintained.
 
-- UC13 refactors the arithmetic operations introduced in UC12 by centralising all shared validation, unit conversion, and base-unit arithmetic logic into private helper methods.
-- This refactoring enforces the DRY (Don’t Repeat Yourself) principle, reduces code duplication, and improves maintainability, while keeping all public APIs and behaviours unchanged.
-
-### ⚙️ Use Case: UC13 Centralised Arithmetic Logic
-
-- Eliminate repeated logic across the add, subtract, and divide methods
-- Ensure consistent validation and error handling for all arithmetic operations
-- Improve readability and maintainability of arithmetic logic
-- Provide a scalable foundation for future operations (multiply, modulo, etc.)
-- Preserve all UC12 behaviour and existing test cases
-
-### ⚙️ Key Implementation Points (Brief)
-
-- Centralised validation logic in one private helper method.
-- Single helper for base-unit conversion and arithmetic.
-- `ArithmeticOperation` enum (ADD, SUBTRACT, DIVIDE) encapsulates operation logic.
-- `add`, `subtract`, `divide` delegate to shared helpers.
-- Implicit and explicit target unit behaviour preserved.
-- Public APIs unchanged; UC12 tests pass as-is.
-- DRY enforced, cleaner code, easier future extension.
-
+- Example:
+  - Quantity(10.0, FEET).add(Quantity(5.0, FEET)) → 15.00 FEET
+  - Quantity(10.0, FEET).subtract(Quantity(5.0, FEET)) → 5.00 FEET
+  - Quantity(10.0, FEET).divide(Quantity(5.0, FEET)) → 2.0
+ 
 ---
 
 # Quantity Measurement App - UC14 (Temperature Measurement with Selective Arithmetic Support)
@@ -381,7 +353,6 @@
 * Cross-category comparisons remain `prohibited and type-safe`.
 * Unsupported operations fail fast with **clear UnsupportedOperationException** messages.
 * All **UC1–UC13 tests pass unchanged**, ensuring non-breaking evolution.
-
 ---
 
 ### 📅 UC15: N-Tier Architecture Refactoring
@@ -407,4 +378,34 @@
   - `QuantityDTO(10, FEET, LENGTH) + QuantityDTO(12, INCHES, LENGTH) → QuantityDTO(11, FEET, LENGTH)`
   - `QuantityDTO(100, CELSIUS, TEMPERATURE).equals(QuantityDTO(212, FAHRENHEIT, TEMPERATURE)) → true`
   - 
+---
+
+### 📅 UC16: Database Persistence Layer Integration
+
+* **Description:**
+  UC16 extends the N-Tier architecture by replacing the cache-based repository with a **database-backed persistence layer**. The application now stores and retrieves quantity measurements using JDBC and a connection pool. This improves scalability and enables persistent storage while maintaining the same layered architecture introduced in UC15.
+
+* **Architecture:**
+
+  * **Controller** – Handles incoming requests and forwards them to the service layer.
+  * **Service** – Performs business logic, conversions, and arithmetic operations.
+  * **Repository** – Provides **database-based storage** using JDBC instead of in-memory caching.
+  * **Connection Pool** – Manages reusable database connections for efficient access.
+  * **DTO / Model / Entity** – Continue to support structured data transfer and internal representation.
+
+* **Implementation:**
+
+  * Introduced `QuantityMeasurementDatabaseRepository` to replace the cache repository.
+  * Implemented database operations using **JDBC (`Connection`, `PreparedStatement`, `ResultSet`)**.
+  * Added `ConnectionPool` utility for managing database connections.
+  * Repository stores measurement results in the **`quantity_measurement` table**.
+  * Service layer continues performing **DTO → Model → Quantity → Model → DTO** transformations.
+  * Existing **Controller and Service logic remain unchanged**, ensuring backward compatibility.
+
+* **Example:**
+
+  * `QuantityDTO(5, FEET, LENGTH) + QuantityDTO(24, INCHES, LENGTH) → QuantityDTO(7, FEET, LENGTH)`
+  * Result is **stored in the database** with a unique key.
+  * `find(key)` retrieves the stored measurement entity from the database.
+
 ---
