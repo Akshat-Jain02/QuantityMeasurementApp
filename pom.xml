@@ -78,6 +78,16 @@
         </dependency>
 
         <!-- ================================================================
+             Spring Boot Starter Mail — JavaMailSender / SMTP support
+             Used by EmailService to send registration, login, and
+             password-change notification emails.
+             ================================================================ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- ================================================================
              JWT — JSON Web Token support (JJWT library)
              jjwt-api     — public API (annotations, JwtBuilder, JwtParser)
              jjwt-impl    — core implementation; runtime only
