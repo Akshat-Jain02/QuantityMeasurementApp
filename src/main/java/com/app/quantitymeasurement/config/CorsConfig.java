@@ -27,7 +27,7 @@ public class CorsConfig {
      * which is the canonical React / Next.js dev-server port.
      * </p>
      */
-    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    @Value("${app.cors.allowed-origins:http://localhost:5173}")
     private String[] allowedOrigins;
 
     /**
